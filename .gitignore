@@ -1,3 +1,6 @@
+#Project Specific gitignores
+
+
 # Vim.gitignore
 .*.sw[a-z]
 *.un~
