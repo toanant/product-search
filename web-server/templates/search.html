@@ -1,0 +1,15 @@
+<!doctype html>
+<head>
+  <title>Search Flipkart</title>
+</head>
+<body>
+  <h3>{{ products|length }} results were found.</h3>
+  {% for p in products %}
+  <a href="{{ p._source.url  }}">{{ p._source.name}}</a>
+  <br>
+  Average rating - {{ p._source.ratingValue }} by {{ p._source.ratingCount }} people
+  <br>
+  Price - {{ p._source.price }}
+  <hr>
+  {% endfor  %}
+</body>
