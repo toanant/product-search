@@ -7,12 +7,16 @@ from celery import Celery
 
 from pymongo import MongoClient
 
+from pyelasticsearch import ElasticSearch
+
 celery = Celery("tasks", broker="amqp://guest@localhost")
 
 # connect to mongodb database
 connection = MongoClient()
 db = connection.abhi
 products= db.products
+
+es = ElasticSearch("http://localhost:9200")
 
 @celery.task
 def fetch_attributes(url):
@@ -33,7 +37,8 @@ def fetch_attributes(url):
         attrs["ratingCount"] = int(d("span[itemprop=\"ratingCount\"]").text())
         attrs["keywords"] =  d("meta[name=\"Keywords\"]").attr("content").split(",")
 
-        products.insert(attrs)
+        es.index("flipkart", "products", attrs)
+        #products.insert(attrs)
 
 
 def get_urls(more_url = None, category = "laptops", limit = 20, start = 0):
