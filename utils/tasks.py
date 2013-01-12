@@ -23,7 +23,7 @@ def fetch_attributes(url):
     attrs = {}
 
     attrs["url"] = url
-    
+
     # create a request object
     r = requests.get(url)
 
@@ -45,28 +45,28 @@ def get_urls(more_url = None, category = "laptops", limit = 20, start = 0):
     urls = []
     if more_url:
         url = more_url
-    
+
     else:
         if category not in CATEGORIES:
             raise InvalidCategoryException
 
         if limit > MAX_LIMIT:
             raise Exception("Limit can't be more than %d"%(MAX_LIMIT))
-    
+
         url = "%s/search/getQueryBuilderResults?vertical=%s&limit=%d&start=%d" % (BASE_URL, category, limit, start)
-    
+
     r = requests.get(url)
+    json = r.json()
 
     if r.status_code == 200:
-        d = pq(r.json["data"]["html"])
+        d = pq(json["data"]["html"])
         for a in d("a.title"):
             urls.append("%s%s" % (BASE_URL, d(a).attr("href")))
 
     res = {}
     res["urls"] = urls
-    res["datacount"] = r.json["data"]["datacount"]
-    res["more_url"] = "%s%s" % (BASE_URL, r.json["data"]["more_url"])
-    res["start"] = r.json["data"]["start"]
+    res["datacount"] = json["data"]["datacount"]
+    res["more_url"] = "%s%s" % (BASE_URL, json["data"]["more_url"])
+    res["start"] = json["data"]["start"]
 
     return res
-
