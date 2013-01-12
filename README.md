@@ -2,7 +2,7 @@
 To be updated
 
 #Getting Started
-1. Read `INSTALL.md` for installation instructions.
+1. Read [`INSTALL.md`](./INSTALL.md) for installation instructions.
 2. Once instllation has been completed, type following commands
 
 ```bash
