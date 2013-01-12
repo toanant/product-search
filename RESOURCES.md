@@ -18,5 +18,5 @@ ElasticSearch (http://www.elasticsearch.org/) is used for indexing everything. T
 ## Web Server
 Flask (http://flask.pocoo.org/), a tiny web application framework is used for exposing the backend to end user.
 
-## Fron-end Web Interface
+## Front-end Web Interface
 jQuery (http://flask.pocoo.org/) is used for making everything interactive.

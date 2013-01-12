@@ -1,5 +1,5 @@
 #Description
-To be updated
+Basically designed to crawl product with their attributes(like Price, Naem, Description, Rating) from Flipkart
 
 #Getting Started
 1. Read [`INSTALL.md`](./INSTALL.md) for installation instructions.
