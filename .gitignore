@@ -1,6 +1,10 @@
 #Project Specific gitignores
 
 
+# virtualenv
+venv/
+
+
 # Vim.gitignore
 .*.sw[a-z]
 *.un~
