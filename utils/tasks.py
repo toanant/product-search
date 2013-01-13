@@ -38,7 +38,7 @@ def fetch_attributes(url):
         attrs["keywords"] =  d("meta[name=\"Keywords\"]").attr("content").split(",")
 
         es.index("flipkart", "products", attrs)
-        #products.insert(attrs)
+        products.insert(attrs)
 
 
 def get_urls(more_url = None, category = "laptops", limit = 20, start = 0):
