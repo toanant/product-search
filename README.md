@@ -2,7 +2,7 @@
 Basically designed to crawl product with their attributes(like Price, Name, Description, Rating) from Flipkart
 
 #Getting Started
-1. Read [`INSTALL.md`](product-search/INSTALL.md) for installation instructions.
+1. Read `INSTALL.md` for installation instructions.
 2. Once instllation has been completed, type following commands
 
 ```bash
