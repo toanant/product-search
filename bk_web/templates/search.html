@@ -1,0 +1,27 @@
+<!doctype html>
+<head>
+  <title>Search Flipkart</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <h3>Search your goodies</h3>
+  <form method="get" action="/search/">
+    <input type="text" name="q" placeholder="Enter your query here">
+    <input type="submit" value="Submit">
+    </form>
+  <hr>
+  <h3>{{ count }} results were found in {{ time_taken }} seconds.</h3>
+
+  {{ pagination.info|safe }}
+{{ pagination.links|safe }}
+  {% for p in products %}
+  <b>{{ start + loop.index }}. &nbsp;&nbsp;</b><a href="{{ p._source.url  }}">{{ p._source.name}}</a>
+  <br>
+  Average rating - {{ p._source.ratingValue }} by {{ p._source.ratingCount }} people
+  <br>
+  Price - {{ p._source.price }}
+  <hr>
+  {% endfor  %}
+  {{ pagination.links|safe }}
+
+</body>
