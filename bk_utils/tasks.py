@@ -3,7 +3,7 @@ from pyquery import PyQuery as pq
 from lxml import etree
 
 from flipkart_settings import *
-from website_setting import *
+from web_setting import *
 from celery import Celery
 
 from pymongo import MongoClient
@@ -14,8 +14,8 @@ celery = Celery("tasks", broker="amqp://guest@localhost")
 
 # connect to mongodb database
 connection = MongoClient()
-db = connection.abhishek
-products= db.products
+db = connection.abhi
+kitab= db.kitab
 
 #es = ElasticSearch("http://localhost:9200")
 
@@ -54,7 +54,7 @@ def fetch_attributes(url):
 		attrs['Number of Pages'] = 'Not available'
 
 
-      # es.index("flipkart", "products", attrs)
+      # es.index("flipkart", "books", attrs)
         ISBN = str(attrs['ISBN-13'])
 	d = {}
 	for key, value in urlset.items():
@@ -100,12 +100,15 @@ def fetch_attributes(url):
 		attrs['Bookadda'] =  'Not available'
 	## for rediff book website
 	if d['Rediffbook']:
-		attrs['Rediffbook'] = d['Rediffbook']("div[class=\"proddetailinforight\"]").text().split()[2]
+		try:
+			attrs['Rediffbook'] = d['Rediffbook']("div[class=\"proddetailinforight\"]").text().split()[2]
+		except AttributeError:
+			attrs['Rediffbook'] = d['Rediffbook']("div[class=\"proddetailinforight\"]").text()
 	else:
 		attrs['Rediffbook'] =  'Not available'  
  
 
-	products.insert(attrs)
+	kitab.insert(attrs)
 
 
 def get_urls(more_url = None, category = "books", limit = 20, start = 0):
