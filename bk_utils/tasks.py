@@ -15,7 +15,11 @@ celery = Celery("tasks", broker="amqp://guest@localhost")
 # connect to mongodb database
 connection = MongoClient()
 db = connection.abhi
+<<<<<<< HEAD
 kitab= db.kitab
+=======
+books= db.books
+>>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
 
 #es = ElasticSearch("http://localhost:9200")
 
@@ -108,7 +112,11 @@ def fetch_attributes(url):
 		attrs['Rediffbook'] =  'Not available'  
  
 
+<<<<<<< HEAD
 	kitab.insert(attrs)
+=======
+	books.insert(attrs)
+>>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
 
 
 def get_urls(more_url = None, category = "books", limit = 20, start = 0):
