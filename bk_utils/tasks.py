@@ -16,7 +16,11 @@ celery = Celery("tasks", broker="amqp://guest@localhost")
 connection = MongoClient()
 db = connection.abhi
 <<<<<<< HEAD
+<<<<<<< HEAD
 kitab= db.kitab
+=======
+books= db.books
+>>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
 =======
 books= db.books
 >>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
@@ -113,7 +117,11 @@ def fetch_attributes(url):
  
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	kitab.insert(attrs)
+=======
+	books.insert(attrs)
+>>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
 =======
 	books.insert(attrs)
 >>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
