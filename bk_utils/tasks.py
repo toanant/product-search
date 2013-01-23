@@ -15,15 +15,7 @@ celery = Celery("tasks", broker="amqp://guest@localhost")
 # connect to mongodb database
 connection = MongoClient()
 db = connection.abhi
-<<<<<<< HEAD
-<<<<<<< HEAD
 kitab= db.kitab
-=======
-books= db.books
->>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
-=======
-books= db.books
->>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
 
 #es = ElasticSearch("http://localhost:9200")
 
@@ -47,19 +39,25 @@ def fetch_attributes(url):
         try:
 		attrs["ratingValue"] = float(d("meta[itemprop=\"ratingValue\"]").attr("content"))
 	except TypeError:
-		attrs["ratingValue"] = 'Not rated'
-        attrs["ratingCount"] = int(d("span[itemprop=\"ratingCount\"]").text())
+		attrs["ratingValue"] = 'Not Rated'
+        try:
+		attrs["ratingCount"] = int(d("span[itemprop=\"ratingCount\"]").text())
+	except TypeError:
+		attrs["ratingCount"] = 'None'
         attrs["keywords"] =  d("meta[name=\"Keywords\"]").attr("content").split(",")
         attrs['Publisher'] = l[1][1].strip()
 	attrs['Publication Year']= l[2][1].strip()
 	attrs['ISBN-13']= l[3][1].strip()
 	attrs['ISBN-10'] = l[4][1].strip()
 	attrs['Language'] = l[5][1].strip()
-	attrs['Binding'] = l[6][1].strip()
+	try:
+		attrs['Binding'] = l[6][1].strip()
+	except IndexError:
+		attrs['Binding'] = 'None'
 	try:
 		attrs['Number of Pages'] = l[7][1].strip()
 	except IndexError:
-		attrs['Number of Pages'] = 'Not available'
+		attrs['Number of Pages'] = 'None'
 
 
       # es.index("flipkart", "books", attrs)
@@ -77,7 +75,7 @@ def fetch_attributes(url):
 	if d['Infibeam']:
 		attrs['Infibeam'] = d['Infibeam']("span[class=\"infiPrice amount price\"]").text()
 	else:
-		attrs['Infibeam'] = 'Not available'
+		attrs['Infibeam'] = 'None'
 
 	## for Crossword website Price
 	if d['Crossword']:
@@ -86,7 +84,7 @@ def fetch_attributes(url):
 		except AttributeError:
 			attrs['Crossword'] = d['Crossword']("span[class=\"variant-final-price\"]").text()
 	else:
-		 attrs['Crossword'] = 'Not available'
+		 attrs['Crossword'] = 'None'
 	
 	## for Homeshop18 website Price
 	if d['Homeshop18']:
@@ -95,7 +93,7 @@ def fetch_attributes(url):
 		except AttributeError:
 			attrs['Homeshop18'] = d['Homeshop18']("span[class=\"pdp_details_hs18Price\"]").text()
 	else:
-		attrs['Homeshop18']  =  'Not available'
+		attrs['Homeshop18']  =  'None'
 
 	## for Bookadda website Price
 	if d['Bookadda']:
@@ -105,7 +103,7 @@ def fetch_attributes(url):
 			attrs['Bookadda'] =  d['Bookadda']("span[class=\"actlprc\"]").text()
 
 	else:
-		attrs['Bookadda'] =  'Not available'
+		attrs['Bookadda'] =  'None'
 	## for rediff book website
 	if d['Rediffbook']:
 		try:
@@ -113,19 +111,10 @@ def fetch_attributes(url):
 		except AttributeError:
 			attrs['Rediffbook'] = d['Rediffbook']("div[class=\"proddetailinforight\"]").text()
 	else:
-		attrs['Rediffbook'] =  'Not available'  
+		attrs['Rediffbook'] =  'None'  
  
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	kitab.insert(attrs)
-=======
-	books.insert(attrs)
->>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
-=======
-	books.insert(attrs)
->>>>>>> 4d265bf4389897bc5c24edb51f9ed57097fa9031
-
 
 def get_urls(more_url = None, category = "books", limit = 20, start = 0):
     urls = []
