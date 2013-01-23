@@ -15,7 +15,7 @@ celery = Celery("tasks", broker="amqp://guest@localhost")
 # connect to mongodb database
 connection = MongoClient()
 db = connection.abhi
-kitab= db.kitab
+kitaab= db.kitaab
 
 #es = ElasticSearch("http://localhost:9200")
 
@@ -23,6 +23,7 @@ kitab= db.kitab
 def fetch_attributes(url):
     attrs = {}
     l = []
+    detail = {}
     attrs["url"] = url
 
     # create a request object
@@ -31,9 +32,23 @@ def fetch_attributes(url):
     if r.status_code == 200:
         # create a pyquery document from response body of above request
         d = pq(r.text)
-        table = d(".fk-specs-type2")
+
+
+### Book Details table Content will be stored in detail{}:
+	table = d(".fk-specs-type2")
 	for t in table.children():
 		l.append(t.text_content().strip().splitlines())
+		i = 1
+        b = len(l)
+        while(i < (b-1)):
+			try:
+				detail[l[i][0]] = l[i][1].strip()
+				i +=1
+			except IndexError:
+				i = b +1
+
+        
+
 	attrs["price"] = d("meta[itemprop=\"price\"]").attr("content")
         attrs["name"] = d("h1[itemprop=\"name\"]").attr("title")
         try:
@@ -45,23 +60,28 @@ def fetch_attributes(url):
 	except TypeError:
 		attrs["ratingCount"] = 'None'
         attrs["keywords"] =  d("meta[name=\"Keywords\"]").attr("content").split(",")
-        attrs['Publisher'] = l[1][1].strip()
-	attrs['Publication Year']= l[2][1].strip()
-	attrs['ISBN-13']= l[3][1].strip()
-	attrs['ISBN-10'] = l[4][1].strip()
-	attrs['Language'] = l[5][1].strip()
+
+
+	attrs['Publisher'] = detail['Publisher']
+	attrs['Publication Year']= detail['Publication Year']
+	attrs['ISBN-13']= detail['ISBN-13']
+	attrs['ISBN-10'] = detail['ISBN-10']
 	try:
-		attrs['Binding'] = l[6][1].strip()
-	except IndexError:
+		attrs['Language'] = detail['Language']
+	except KeyError:
+		attrs['Language'] = 'None'
+	try:
+		attrs['Binding'] = detail['Binding']
+	except KeyError:
 		attrs['Binding'] = 'None'
 	try:
-		attrs['Number of Pages'] = l[7][1].strip()
-	except IndexError:
+		attrs['Number of Pages'] = detail['Number of Pages']
+	except KeyError:
 		attrs['Number of Pages'] = 'None'
 
 
       # es.index("flipkart", "books", attrs)
-        ISBN = str(attrs['ISBN-13'])
+        ISBN = str(detail['ISBN-13'])
 	d = {}
 	for key, value in urlset.items():
 		t_url = value + ISBN
@@ -108,13 +128,13 @@ def fetch_attributes(url):
 	if d['Rediffbook']:
 		try:
 			attrs['Rediffbook'] = d['Rediffbook']("div[class=\"proddetailinforight\"]").text().split()[2]
-		except AttributeError:
+		except IndexError:
 			attrs['Rediffbook'] = d['Rediffbook']("div[class=\"proddetailinforight\"]").text()
 	else:
 		attrs['Rediffbook'] =  'None'  
  
 
-	kitab.insert(attrs)
+	kitaab.insert(attrs)
 
 def get_urls(more_url = None, category = "books", limit = 20, start = 0):
     urls = []
