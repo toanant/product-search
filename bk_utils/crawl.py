@@ -1,6 +1,6 @@
 from tasks import *
 
-def crawl(category="laptops"):
+def crawl(category="books"):
 
     if category not in CATEGORIES:
         raise InvalidCategoryException
