@@ -15,8 +15,7 @@ celery = Celery("tasks", broker="amqp://guest@localhost")
 # connect to mongodb database
 connection = MongoClient()
 db = connection.abhi
-kitaab= db.kitaab
-
+pustak= db.pustak
 #es = ElasticSearch("http://localhost:9200")
 
 @celery.task
@@ -38,7 +37,7 @@ def fetch_attributes(url):
 		l.append(t.text_content().strip().splitlines())
 	i = 1
     	b = len(l)
-    	while(i < (b-1)):
+    	while(i <  b):
 		try:
 			detail[l[i][0]] = l[i][1].strip()
 			i +=1
@@ -58,6 +57,8 @@ def fetch_attributes(url):
 	except TypeError:
 		attrs["ratingCount"] = 'None'
         attrs["keywords"] =  d("meta[name=\"Keywords\"]").attr("content").split(",")
+	
+
 	attrs['Publisher'] = detail.get('Publisher')
 	attrs['Publication Year']= detail.get('Publication Year')
 	attrs['ISBN-13']= detail.get('ISBN-13')
@@ -65,11 +66,11 @@ def fetch_attributes(url):
 	attrs['Language'] = detail.get('Language')
 	attrs['Binding'] = detail.get('Binding')
 	attrs['Number of Pages'] = detail.get('Number of Pages')
-
+#	attrs["details"] = detail
       # es.index("flipkart", "books", attrs)
-        ISBN = str(detail['ISBN-13'])
-
-	## 'd'  holds the pyquery data corresponding to each website request for        ## ISBN
+      
+       	## 'd'  holds the pyquery data corresponding to each website request for        ## ISBN
+	ISBN = str(detail.get('ISBN-13'))
 	d = {}
 	for key, value in urlset.items():
 		t_url = value + ISBN
@@ -80,13 +81,13 @@ def fetch_attributes(url):
 			d[key] = pq(r.text)	
 	
 	## for Infibeam website Price
-	if d['Infibeam']:
+	if (d.get('Infibeam') != None):
 		attrs['Infibeam'] = d['Infibeam']("span[class=\"infiPrice amount price\"]").text()
 	else:
 		attrs['Infibeam'] = 'None'
 
 	## for Crossword website Price
-	if d['Crossword']:
+	if (d.get('Crossword') != None):
 		try:
 			attrs['Crossword'] = d['Crossword']("span[class=\"variant-final-price\"]").text().strip('R')
 		except AttributeError:
@@ -95,7 +96,7 @@ def fetch_attributes(url):
 		 attrs['Crossword'] = 'None'
 	
 	## for Homeshop18 website Price
-	if d['Homeshop18']:
+	if (d.get('Homeshop18') != None):
 		try:
 			attrs['Homeshop18'] = d['Homeshop18']("span[class=\"pdp_details_hs18Price\"]").text().strip('Rs.')
 		except AttributeError:
@@ -104,7 +105,7 @@ def fetch_attributes(url):
 		attrs['Homeshop18']  =  'None'
 
 	## for Bookadda website Price
-	if d['Bookadda']:
+	if (d.get('Bookadda') != None):
 		try:
 			attrs['Bookadda'] =  d['Bookadda']("span[class=\"actlprc\"]").text().strip('Rs.')
 		except AttributeError:
@@ -113,7 +114,7 @@ def fetch_attributes(url):
 	else:
 		attrs['Bookadda'] =  'None'
 	## for rediff book website
-	if d['Rediffbook']:
+	if (d.get('Rediffbook') != None):
 		try:
 			attrs['Rediffbook'] = d['Rediffbook']("div[class=\"proddetailinforight\"]").text().split()[2]
 		except IndexError:
@@ -121,12 +122,10 @@ def fetch_attributes(url):
 		except AttributeError:
 			attrs['Rediffbook'] = d['Rediffbook']("div[class=\"proddetailinforight\"]").text()
 	else:
-		attrs['Rediffbook'] =  'None'  
- 
+		attrs['Rediffbook'] =  'None'
+	pustak.insert(attrs)
 
-	kitaab.insert(attrs)
-
-def get_urls(more_url = None, category = "books", limit = 20, start =160):
+def get_urls(more_url = None, category = "books", limit = 20, start =460):
     urls = []
     if more_url:
         url = more_url
